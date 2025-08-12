@@ -1,3 +1,3 @@
 # Contact_form
 ![image alt](https://github.com/RamyaS-1701/Contact_form/blob/1b1160440613f39d1698e62948d4109e2ccc1e03/Screenshot%20(132).png)
-![image alt](https://github.com/RamyaS-1701/Contact_form/blob/c83bf83b1a2e4dbe03b386a30b28a3185de25360/README.md)
+![image alt](https://github.com/RamyaS-1701/Contact_form/blob/9148a2d2715627d3103ca006fccb2e6104fe0e52/Screenshot%20(133).png)
