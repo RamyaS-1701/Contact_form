@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Form</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            color: #1a202c;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 2rem;
+            
+            /* Creative Background Effects with Food Image */
+            background-image: url('https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=2680&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.4); /* Dark overlay for readability */
+            z-index: 0;
+        }
+
+        /* Frosted glass effect for the form container */
+        .frosted-glass {
+            position: relative;
+            z-index: 1;
+            background-color: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            animation: slide-in 1s ease-out forwards;
+            opacity: 0;
+        }
+
+        @keyframes gradient-animation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        /* Page Transition Animation */
+        @keyframes slide-in {
+            0% { transform: translateY(50px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+        
+        /* Field focus animation styles */
+        .form-input-field:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
+            border-color: #3b82f6;
+        }
+
+        /* Interactive Input Feedback */
+        .input-container {
+            position: relative;
+        }
+
+        .validation-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.25rem;
+            display: none;
+            transition: color 0.3s;
+        }
+        
+        .validation-icon.valid {
+            color: #10b981; /* Green checkmark */
+            display: block;
+        }
+
+        .validation-icon.invalid {
+            color: #ef4444; /* Red cross */
+            display: block;
+        }
+        
+        /* Button animations */
+        .submit-btn {
+            position: relative;
+            overflow: hidden;
+            transform: translateZ(0);
+            transition: transform 0.3s ease-in-out, background-color 0.3s ease-in-out;
+            background-color: #3b82f6; /* Initial color */
+        }
+
+        .submit-btn:hover {
+            transform: scale(1.05);
+            background: conic-gradient(from 0deg, #3b82f6, #2563eb, #3b82f6);
+            animation: spin-gradient 2s linear infinite;
+        }
+        
+        .submit-btn:active {
+            background-color: #1e40af; /* Darker color on click */
+            transform: scale(1.02);
+            transition: none; /* No transition on click for a snappier feel */
+        }
+        
+        /* Conic gradient spin animation */
+        @keyframes spin-gradient {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Ripple Effect */
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            transform: scale(0);
+            animation: ripple-effect 0.6s linear;
+        }
+
+        @keyframes ripple-effect {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        /* Loading Spinner */
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3b82f6;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Checkmark Success */
+        .checkmark-icon {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            transform: scale(0);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .checkmark-icon svg {
+            stroke: #fff;
+            stroke-width: 4;
+            fill: none;
+            stroke-dasharray: 16;
+            stroke-dashoffset: 16;
+            animation: draw-checkmark 0.5s linear forwards;
+        }
+
+        @keyframes draw-checkmark {
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+
+        /* Shake Error Animation */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-5px); }
+            40%, 80% { transform: translateX(5px); }
+        }
+        .shake-animation {
+            animation: shake 0.5s ease-in-out;
+        }
+
+        /* Food animation styles */
+        .food-animation-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .food-icon {
+            position: absolute;
+            font-size: 2rem;
+            animation: float linear infinite, scale-up-down 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0); opacity: 1; }
+            100% { transform: translateY(-100vh); opacity: 0; }
+        }
+
+        @keyframes scale-up-down {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <div class="food-animation-container">
+        <!-- Food Icons for Animation -->
+        <span class="food-icon" style="top: 80%; left: 10%; animation-duration: 20s; animation-delay: 1s;">🍔</span>
+        <span class="food-icon" style="top: 70%; left: 50%; animation-duration: 15s; animation-delay: 3s;">🍕</span>
+        <span class="food-icon" style="top: 90%; left: 70%; animation-duration: 25s; animation-delay: 5s;">🥗</span>
+        <span class="food-icon" style="top: 60%; left: 25%; animation-duration: 18s; animation-delay: 7s;">🌮</span>
+        <span class="food-icon" style="top: 85%; left: 85%; animation-duration: 22s; animation-delay: 9s;">🍦</span>
+        <span class="food-icon" style="top: 75%; left: 40%; animation-duration: 17s; animation-delay: 11s;">🍩</span>
+        <span class="food-icon" style="top: 65%; left: 60%; animation-duration: 23s; animation-delay: 13s;">🍟</span>
+        <span class="food-icon" style="top: 95%; left: 30%; animation-duration: 19s; animation-delay: 15s;">🥑</span>
+    </div>
+
+    <div class="frosted-glass p-8 rounded-xl shadow-lg w-full max-w-md">
+        <h1 class="text-3xl font-bold mb-6 text-center text-gray-800">Contact Us</h1>
+        
+        <form id="contact-form" class="space-y-6">
+            <div class="input-container">
+                <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                <input type="text" id="name" name="name" class="form-input-field w-full px-4 py-2 border border-gray-300 rounded-lg transition-all duration-200" placeholder="Your Name">
+                <span id="name-validation-icon" class="validation-icon"></span>
+                <p id="name-error" class="text-sm text-red-500 mt-1 hidden"></p>
+            </div>
+            
+            <div class="input-container">
+                <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <input type="email" id="email" name="email" class="form-input-field w-full px-4 py-2 border border-gray-300 rounded-lg transition-all duration-200" placeholder="you@example.com">
+                <span id="email-validation-icon" class="validation-icon"></span>
+                <p id="email-error" class="text-sm text-red-500 mt-1 hidden"></p>
+            </div>
+
+            <div class="input-container">
+                <label for="message" class="block text-sm font-medium text-gray-700 mb-1">Message</label>
+                <textarea id="message" name="message" rows="4" class="form-input-field w-full px-4 py-2 border border-gray-300 rounded-lg transition-all duration-200" placeholder="Your message here..."></textarea>
+                <span id="message-validation-icon" class="validation-icon"></span>
+                <p id="message-error" class="text-sm text-red-500 mt-1 hidden"></p>
+            </div>
+            
+            <button type="submit" class="submit-btn w-full bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200">
+                Submit
+            </button>
+        </form>
+
+        <div id="success-message" class="mt-6 p-4 bg-green-100 text-green-700 rounded-lg hidden transition-opacity duration-300">
+            <p><strong>Success!</strong> Your message has been sent.</p>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('contact-form');
+        const nameInput = document.getElementById('name');
+        const emailInput = document.getElementById('email');
+        const messageInput = document.getElementById('message');
+        const nameError = document.getElementById('name-error');
+        const emailError = document.getElementById('email-error');
+        const messageError = document.getElementById('message-error');
+        const successMessage = document.getElementById('success-message');
+        const submitButton = document.querySelector('.submit-btn');
+        const nameValidationIcon = document.getElementById('name-validation-icon');
+        const emailValidationIcon = document.getElementById('email-validation-icon');
+        const messageValidationIcon = document.getElementById('message-validation-icon');
+
+        // Function to validate an email using a regular expression
+        function isValidEmail(email) {
+            const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+            return regex.test(String(email).toLowerCase());
+        }
+
+        // Real-time validation function
+        function validateInput(inputElement, errorElement, validationIcon, validator) {
+            const value = inputElement.value.trim();
+            if (validator(value)) {
+                errorElement.classList.add('hidden');
+                validationIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>`;
+                validationIcon.classList.remove('invalid');
+                validationIcon.classList.add('valid');
+            } else if (value === '') {
+                validationIcon.classList.remove('valid', 'invalid');
+                validationIcon.innerHTML = '';
+            } else {
+                validationIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>`;
+                validationIcon.classList.remove('valid');
+                validationIcon.classList.add('invalid');
+            }
+        }
+        
+        nameInput.addEventListener('input', () => {
+            validateInput(nameInput, nameError, nameValidationIcon, (val) => val.length > 0);
+        });
+
+        emailInput.addEventListener('input', () => {
+            validateInput(emailInput, emailError, emailValidationIcon, isValidEmail);
+        });
+
+        messageInput.addEventListener('input', () => {
+            validateInput(messageInput, messageError, messageValidationIcon, (val) => val.length > 0);
+        });
+        
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            let formIsValid = true;
+
+            nameError.classList.add('hidden');
+            emailError.classList.add('hidden');
+            messageError.classList.add('hidden');
+            successMessage.classList.add('hidden');
+            form.classList.remove('shake-animation');
+
+            // Validate Name
+            if (nameInput.value.trim() === '') {
+                nameError.textContent = 'Name is required.';
+                nameError.classList.remove('hidden');
+                formIsValid = false;
+            }
+
+            // Validate Email
+            if (emailInput.value.trim() === '') {
+                emailError.textContent = 'Email is required.';
+                emailError.classList.remove('hidden');
+                formIsValid = false;
+            } else if (!isValidEmail(emailInput.value)) {
+                emailError.textContent = 'Please enter a valid email address.';
+                emailError.classList.remove('hidden');
+                formIsValid = false;
+            }
+
+            // Validate Message
+            if (messageInput.value.trim() === '') {
+                messageError.textContent = 'Message is required.';
+                messageError.classList.remove('hidden');
+                formIsValid = false;
+            }
+
+            if (formIsValid) {
+                const originalText = submitButton.innerHTML;
+                submitButton.innerHTML = `<div class="loader mx-auto"></div>`;
+                submitButton.disabled = true;
+
+                await new Promise(resolve => setTimeout(resolve, 2000));
+
+                submitButton.innerHTML = `
+                    <div class="checkmark-icon mx-auto">
+                        <svg viewBox="0 0 52 52">
+                            <path d="M14.1 27.2l7.1 7.2 16.7-16.8" />
+                        </svg>
+                    </div>
+                `;
+                submitButton.disabled = false;
+                
+                successMessage.classList.remove('hidden');
+                nameInput.value = '';
+                emailInput.value = '';
+                messageInput.value = '';
+
+                setTimeout(() => {
+                    submitButton.innerHTML = originalText;
+                }, 3000);
+
+            } else {
+                form.classList.add('shake-animation');
+            }
+        });
+
+        submitButton.addEventListener('click', (e) => {
+            const rect = submitButton.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            const ripple = document.createElement('span');
+            ripple.className = 'ripple';
+            ripple.style.left = `${x}px`;
+            ripple.style.top = `${y}px`;
+
+            submitButton.appendChild(ripple);
+
+            ripple.addEventListener('animationend', () => {
+                ripple.remove();
+            });
+        });
+    </script>
+</body>
+</html>
